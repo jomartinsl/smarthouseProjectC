@@ -53,6 +53,16 @@ def get_smarthouse_info() -> dict[str, int | float]:
 # here ...
 
 
+@app.get("/smarthouse/floors")
+def get_floors():
+    info = []
+    for i in range(len(smarthouse.get_floors())):
+        info.append(f"Floor {i + 1} has {len(smarthouse.get_floors()[i].rooms)} rooms")
+    
+    return info 
+
+
+
 if __name__ == '__main__':
     uvicorn.run(app, host="127.0.0.1", port=8000)
 
