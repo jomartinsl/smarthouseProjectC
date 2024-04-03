@@ -1,6 +1,6 @@
 import sqlite3
 from typing import Optional
-from domain import Actuator, ActuatorWithSensor, Measurement, Room, Sensor, SmartHouse
+from smarthouse.domain import Actuator, ActuatorWithSensor, Measurement, Room, Sensor, SmartHouse
 
 class SmartHouseRepository:
     """
