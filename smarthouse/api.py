@@ -81,7 +81,7 @@ def get_rooms(fid: int) -> dict[str, int | float | str]:
     rooms = floor.rooms
     info = {}
     for i, room in enumerate(rooms):
-        key = f"room_no {i+1}, area "
+        key = f"room_no {i+1}, room name {room.room_name}, area "
         info[key] = room.room_size
     return info
 
@@ -142,8 +142,9 @@ def get_sensor_values(uuid: str, limit: int):
     else:
         c = repo.conn.cursor()
         c.execute(f"SELECT ts, value, unit FROM measurements WHERE device = '{uuid}';")
+    result = c.fetchall()
     c.close()
-    return c.fetchall()
+    return result
 
 
 @app.delete("/smarthouse/sensor/{uuid}/oldest")

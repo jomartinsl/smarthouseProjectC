@@ -1,0 +1,15 @@
+meta {
+  name: Information about n lastest measurement from spesific sensor
+  type: http
+  seq: 11
+}
+
+get {
+  url: http://127.0.0.1:8000/smarthouse/sensor/5e13cabc-5c58-4bb3-82a2-3039e4480a6d/values?limit=5
+  body: none
+  auth: none
+}
+
+query {
+  limit: 5
+}
