@@ -9,8 +9,8 @@ class SmartHouseRepository:
     """
 
     def __init__(self, file: str) -> None:
-        self.file = file 
-        self.conn = sqlite3.connect(file)
+        self.file = file
+        self.conn = sqlite3.connect(file, check_same_thread=False)
 
     def __del__(self):
         self.conn.close()

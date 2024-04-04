@@ -122,6 +122,7 @@ def get_sensor(uuid: str):
         
     return {"error": "device not found"}
 
+
 @app.post("/smarthouse/sensor/{uuid}/current")
 def post_sensor(uuid: str):
     for i in range(len(smarthouse.get_devices())):
@@ -148,9 +149,34 @@ def get_sensor_values(uuid: str, limit: int):
 @app.delete("/smarthouse/sensor/{uuid}/oldest")
 def delete_sensor_values(uuid: str):
     c = repo.conn.cursor()
-    c.execute(f"DELETE FROM measurements WHERE device = '{uuid}' ORDER BY ts ASC LIMIT 1;")
+    c.execute(f"SELECT ts FROM measurements WHERE device = '{uuid}' ORDER BY ts ASC LIMIT 1;")
+    ts_for_oldest_measurement = c.fetchone()[0]
+    c.execute(f"DELETE FROM measurements WHERE device = '{uuid}' AND ts = '{ts_for_oldest_measurement}';")
     repo.conn.commit()
     c.close()
+
+
+@app.get("/smarthouse/actuator/{uuid}/current")
+def get_actuator(uuid: str):
+    for i in range(len(smarthouse.get_devices())):
+        if smarthouse.get_devices()[i].id == uuid:
+            c = repo.conn.cursor()
+            c.execute(f"SELECT state FROM actuator_state WHERE device_id = '{uuid}';")
+            state = c.fetchone()
+            c.close()
+            return {"device": i+1, "room": smarthouse.get_devices()[i].room.room_name, "state": state}
+
+    return {"error": "device not found"}
+
+
+@app.put("/smarthouse/device/{uuid}")
+def put_device(uuid: str):
+    for i in range(len(smarthouse.get_devices())):
+        if smarthouse.get_devices()[i].id == uuid:
+            repo.update_actuator_state(smarthouse.get_devices()[i])
+            return {"device": i+1, "room": smarthouse.get_devices()[i].room.room_name, "state": smarthouse.get_devices()[i].state}
+
+    return {"error": "device not found"}
 
 
 if __name__ == '__main__':
